@@ -1,8 +1,6 @@
 name: example
 on:
-  #schedule:
-   workflow_dispatch:
-   # - cron: '*/1 * * * *' # Every 5 minutes
+  workflow_dispatch:  # 手动触发
 jobs:
   job:
     runs-on: ubuntu-latest
@@ -14,5 +12,18 @@ jobs:
           product-id: 211290
           schedule-id: 100001
           seat-id: 1_0
-          slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          message: '<@U12345678> 달려달려~'
+          message: 'Ticket is available! Hurry up and check: https://www.melon-ticket.com'
+
+      - name: Send Email Notification
+        if: success()  # 只有检查成功时发送邮件
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.163.com  # 网易邮箱的SMTP服务器
+          server_port: 465  # 网易邮箱的SMTP端口
+          username: ${{ secrets.NETEASE_EMAIL_USER }}  # 引用 Secrets
+          password: ${{ secrets.NETEASE_EMAIL_PASSWORD }}  # 引用 Secrets
+          subject: Ticket Availability Notification
+          body: ${{ steps.check-tickets.outputs.message }}  # 获取上一步的输出
+          to: ${{ secrets.EMAIL_RECIPIENT }}
+          from: ${{ secrets.NETEASE_EMAIL_USER }}
+          secure: true
