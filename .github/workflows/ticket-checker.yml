@@ -12,6 +12,7 @@ jobs:
           product-id: 211290
           schedule-id: 100001
           seat-id: 1_0
+          slack-incoming-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}  # 确保这里正确引用了 Secret
           message: 'Ticket is available! Hurry up and check: https://www.melon-ticket.com'
 
       - name: Send Email Notification
